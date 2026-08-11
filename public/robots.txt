@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Pages sans intérêt pour l'index : confirmation d'envoi et endpoints internes.
+Disallow: /merci
+Disallow: /api/
+
+Sitemap: https://lenggroupe.bf/sitemap.xml

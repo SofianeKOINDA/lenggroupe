@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Neutres chauds : un charbon légèrement taupe, qui s'accorde au brun
+     plutôt que le gris bleuté par défaut. */
+  --color-ink-50: #f8f7f5;
+  --color-ink-100: #efece8;
+  --color-ink-200: #ddd8d1;
+  --color-ink-300: #c2bab0;
+  --color-ink-400: #9d9387;
+  --color-ink-500: #7c7266;
+  --color-ink-600: #635a50;
+  --color-ink-700: #4f4841;
+  --color-ink-800: #3a3531;
+  --color-ink-900: #272320;
+  --color-ink-950: #171412;
+
+  /* Brun terre cuite — la couleur de la brique de terre comprimée et de la
+     latérite. brand-500 tient le contraste AA sur texte blanc (4.7:1). */
+  --color-brand-50: #faf7f4;
+  --color-brand-100: #f3ebe3;
+  --color-brand-200: #e6d5c5;
+  --color-brand-300: #d3b69f;
+  --color-brand-400: #b98f70;
+  --color-brand-500: #96684a;
+  --color-brand-600: #7d5640;
+  --color-brand-700: #664637;
+  --color-brand-800: #533a2f;
+  --color-brand-900: #46322a;
+  --color-brand-950: #261a14;
+
+  /* Rayons adoucis : chaque utilitaire rounded-* hérite de ces valeurs,
+     les formes deviennent plus fluides sans toucher aux composants. */
+  --radius-xs: 0.375rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 2.5rem;
+  --radius-4xl: 3rem;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-ink-800 font-sans antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink-950 tracking-tight text-balance;
+  }
+}
+
+@utility container-page {
+  @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8;
+}
+
+/* État initial des blocs animés (directive v-reveal). GSAP prend le relais
+   à l'hydratation ; sans JavaScript, la classe `.js` est absente et rien
+   n'est masqué. */
+.js .reveal {
+  @apply opacity-0 translate-y-7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal {
+    @apply opacity-100 translate-y-0;
+  }
+}
