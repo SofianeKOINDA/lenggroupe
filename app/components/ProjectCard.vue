@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Project } from '~/data/projects'
+import type { ProjectCardData } from '~/composables/useContent'
 
-defineProps<{ project: Project }>()
+defineProps<{ project: ProjectCardData }>()
 
 const statusStyle: Record<string, string> = {
   'Livré': 'bg-emerald-50 text-emerald-700 ring-emerald-200',

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { services } from '~/data/services'
 import { site } from '~/data/site'
 
 const props = withDefaults(defineProps<{ detailed?: boolean }>(), { detailed: false })
+
+const services = useServices()
+const route = useRoute()
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -49,7 +51,8 @@ async function submit() {
   // pour que l'utilisateur voie le traitement au lieu d'un saut de page brutal.
   const request = $fetch('/api/contact', {
     method: 'POST',
-    body: { ...form, kind: props.detailed ? 'devis' : 'contact' }
+    // `source` : la page d'où part la demande, visible ensuite dans le dashboard.
+    body: { ...form, kind: props.detailed ? 'devis' : 'contact', source: route.path }
   })
     .then(() => ({ ok: true as const }))
     .catch((e: unknown) => ({ ok: false as const, error: e }))

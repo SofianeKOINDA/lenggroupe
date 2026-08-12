@@ -140,12 +140,12 @@ watch(open, async (value) => {
           </span>
         </NuxtLink>
 
-        <nav ref="links" class="hidden items-center gap-1 lg:flex">
+        <nav ref="links" class="hidden items-center gap-0.5 lg:flex">
           <NuxtLink
             v-for="item in nav"
             :key="item.to"
             :to="item.to"
-            class="rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-300"
+            class="rounded-full px-3 py-2 text-sm font-medium transition-colors duration-300"
             :class="
               scrolled
                 ? 'text-ink-600 hover:bg-ink-50 hover:text-ink-950'
@@ -176,7 +176,7 @@ watch(open, async (value) => {
 
           <button
             type="button"
-            class="grid size-10 place-items-center rounded-full ring-1 transition-colors duration-300 lg:hidden"
+            class="grid size-11 place-items-center rounded-full ring-1 transition-colors duration-300 lg:hidden"
             :class="scrolled ? 'ring-ink-200' : 'ring-white/25'"
             :aria-expanded="open"
             aria-label="Ouvrir le menu"

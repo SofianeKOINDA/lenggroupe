@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { site, stats } from '~/data/site'
-import { guarantees, process, services } from '~/data/services'
-import { projects, references } from '~/data/projects'
-import { team } from '~/data/team'
-import { faq } from '~/data/faq'
+import { guarantees, process } from '~/data/services'
+import { references } from '~/data/projects'
+
+// Contenu administrable depuis /admin, chargé par le plugin `content`.
+const services = useServices()
+const projects = useProjects()
+const team = useTeam()
+const faq = useFaq()
+
+/** Signataire de la citation : le premier membre de l'équipe publié. */
+const founder = computed(() => team.value[0])
 
 useSeoMeta({
   title: site.baseline,
@@ -12,116 +19,16 @@ useSeoMeta({
   ogDescription: site.description
 })
 
-const featured = computed(() => projects.slice(0, 3))
+const featured = computed(() => projects.value.slice(0, 3))
 
-// Fiche établissement local, posée une seule fois pour tout le site.
-useJsonLd(localBusinessSchema(useSiteUrl()))
+// Fiche établissement local, posée une seule fois pour tout le site. Les avis
+// publiés y alimentent la note agrégée, s'ils portent une note.
+useJsonLd(localBusinessSchema(useSiteUrl(), useReviews().value))
 </script>
 
 <template>
   <div>
-    <!-- Hero -->
-    <section class="relative isolate overflow-hidden bg-ink-950">
-      <NuxtImg
-        src="/img/projets/villa-r1-grise-01.jpg"
-        alt=""
-        aria-hidden="true"
-        preload
-        width="1920"
-        height="1080"
-        class="absolute inset-0 size-full object-cover"
-      />
-      <!-- Voile dégradé. En mobile le texte occupe toute la largeur : on voile
-           verticalement. Dès lg, on dégrade vers la droite pour dégager la photo. -->
-      <div
-        class="absolute inset-0 bg-gradient-to-b from-ink-950/80 via-ink-950/72 to-ink-950/78 lg:bg-gradient-to-r lg:from-ink-950/85 lg:via-ink-950/60 lg:to-ink-950/25"
-      />
-
-      <div
-        class="container-page relative grid gap-14 pb-24 pt-36 lg:grid-cols-[1.15fr_1fr] lg:pb-32 lg:pt-44"
-      >
-        <div>
-          <p
-            v-reveal
-            class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-brand-300 ring-1 ring-white/15"
-          >
-            <span class="size-1.5 rounded-full bg-brand-400" />
-            Agence BTP · Burkina Faso
-          </p>
-
-          <h1
-            v-reveal="80"
-            class="mt-6 text-4xl font-extrabold leading-[1.08] text-white sm:text-5xl lg:text-6xl"
-          >
-            Bâtissons l'Afrique de demain,
-            <span class="text-brand-500">aujourd'hui</span>
-          </h1>
-
-          <p v-reveal="160" class="mt-6 max-w-xl text-lg leading-relaxed text-ink-200">
-            Construction, génie civil, aménagement intérieur et sécurisation foncière. Depuis plus
-            de 20 ans, nous menons vos projets de la première esquisse à la remise des clés.
-          </p>
-
-          <div v-reveal="240" class="mt-9 flex flex-wrap gap-3">
-            <NuxtLink
-              to="/devis"
-              class="rounded-full bg-brand-500 px-7 py-3.5 font-semibold text-white transition hover:bg-brand-600"
-            >
-              Devis gratuit
-            </NuxtLink>
-            <NuxtLink
-              to="/realisations"
-              class="rounded-full border border-white/25 px-7 py-3.5 font-semibold text-white transition hover:border-brand-500 hover:bg-white/5"
-            >
-              Voir nos réalisations
-            </NuxtLink>
-          </div>
-
-          <p v-reveal="280" class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-300">
-            <span class="inline-flex items-center gap-2">
-              <span class="size-1.5 rounded-full bg-emerald-400" />
-              Réponse sous {{ site.responseTime }}
-            </span>
-            <span class="inline-flex items-center gap-2">
-              <span class="size-1.5 rounded-full bg-emerald-400" />
-              Devis gratuit et sans engagement
-            </span>
-          </p>
-
-          <dl v-reveal="320" class="mt-12 flex flex-wrap gap-x-10 gap-y-5 text-white">
-            <div v-for="s in stats.slice(0, 3)" :key="s.label">
-              <dt class="text-xs uppercase tracking-[0.14em] text-ink-400">{{ s.label }}</dt>
-              <dd class="font-display text-2xl font-extrabold">{{ s.value }}{{ s.suffix }}</dd>
-            </div>
-          </dl>
-        </div>
-
-        <div v-reveal="200" class="hidden lg:block">
-          <div class="relative ml-auto max-w-sm">
-            <div class="overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10">
-              <NuxtImg
-                src="/img/projets/briques-vue-ensemble.jpg"
-                alt="Immeuble R+1 en briques de terre comprimée"
-                width="480"
-                height="600"
-                class="aspect-4/5 w-full object-cover"
-              />
-            </div>
-            <div
-              class="absolute -bottom-8 -left-16 w-64 rounded-xl bg-white p-5 shadow-2xl"
-            >
-              <p class="font-display text-3xl font-extrabold text-ink-950">
-                {{ stats[1].value }}{{ stats[1].suffix }}
-              </p>
-              <p class="mt-1 text-sm font-medium text-ink-500">{{ stats[1].label }}</p>
-              <div class="mt-4 h-1 rounded-full bg-ink-100">
-                <div class="h-1 w-4/5 rounded-full bg-brand-500" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <HomeHero />
 
     <!-- Bandeau chiffres -->
     <section class="bg-ink-900">
@@ -286,18 +193,18 @@ useJsonLd(localBusinessSchema(useSiteUrl()))
             « Nous ne vendons pas des mètres carrés. Nous livrons des ouvrages que nos clients
             transmettront à leurs enfants. »
           </blockquote>
-          <figcaption class="mt-8 flex items-center justify-center gap-4">
+          <figcaption v-if="founder" class="mt-8 flex items-center justify-center gap-4">
             <NuxtImg
-              :src="team[0].photo"
-              :alt="team[0].name"
+              :src="founder.photo"
+              :alt="founder.name"
               width="56"
               height="56"
               loading="lazy"
               class="size-14 rounded-full object-cover object-top"
             />
             <div class="text-left">
-              <p class="font-semibold text-white">{{ team[0].name }}</p>
-              <p class="text-sm text-ink-400">{{ team[0].role }}</p>
+              <p class="font-semibold text-white">{{ founder.name }}</p>
+              <p class="text-sm text-ink-400">{{ founder.role }}</p>
             </div>
           </figcaption>
         </figure>

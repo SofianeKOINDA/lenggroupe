@@ -1,5 +1,5 @@
 import { site } from '~/data/site'
-import { reviews } from '~/data/reviews'
+import type { Review } from '~/data/reviews'
 import type { FaqItem } from '~/data/faq'
 
 type Json = Record<string, unknown>
@@ -21,7 +21,7 @@ export function useSiteUrl() {
 }
 
 /** Fiche établissement local — à poser une seule fois, sur l'accueil. */
-export function localBusinessSchema(baseUrl: string): Json {
+export function localBusinessSchema(baseUrl: string, reviews: Review[] = []): Json {
   const schema: Json = {
     '@context': 'https://schema.org',
     '@type': 'GeneralContractor',

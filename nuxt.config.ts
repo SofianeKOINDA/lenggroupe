@@ -16,6 +16,14 @@ export default defineNuxtConfig({
     }
   },
 
+  // Le dashboard est privé et derrière authentification : le rendre côté serveur
+  // n'apporte rien (ni référencement, ni partage) et compliquerait la
+  // transmission du cookie de session aux appels d'API.
+  routeRules: {
+    '/admin': { ssr: false },
+    '/admin/**': { ssr: false }
+  },
+
   fonts: {
     families: [
       { name: 'Inter', provider: 'google', weights: [400, 500, 600, 700] },

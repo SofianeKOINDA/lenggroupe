@@ -6,6 +6,10 @@
 .cache
 dist
 
+# Base de données et images téléversées depuis le dashboard.
+# Ne jamais versionner : contient les demandes reçues des clients.
+data
+
 # Node dependencies
 node_modules
 

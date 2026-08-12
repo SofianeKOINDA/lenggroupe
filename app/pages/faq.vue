@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { faq } from '~/data/faq'
 import { site } from '~/data/site'
+
+const faq = useFaq()
 
 useSeoMeta({
   title: 'Questions fréquentes',
@@ -8,7 +9,7 @@ useSeoMeta({
     "Délais, devis gratuit, coût de construction, titre foncier, garanties, paiement : les réponses aux questions les plus posées à LENG GROUPE."
 })
 
-useJsonLd(faqSchema(faq))
+useJsonLd(faqSchema(faq.value))
 </script>
 
 <template>

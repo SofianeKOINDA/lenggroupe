@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { process, services } from '~/data/services'
+import { process } from '~/data/services'
+
+const services = useServices()
 
 useSeoMeta({
   title: 'Nos services BTP',

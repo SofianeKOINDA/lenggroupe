@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { projects } from '~/data/projects'
-
 const route = useRoute()
 const slug = computed(() => String(route.params.slug))
 
-const project = computed(() => projects.find((p) => p.slug === slug.value))
+// Fiche complète (galerie et étude de cas) : elle n'est chargée que sur cette
+// page, contrairement aux vignettes déjà présentes dans le contenu du site.
+const { data: project } = await useFetch(() => `/api/content/project/${slug.value}`, {
+  key: () => `project:${slug.value}`
+})
 
 if (!project.value) {
   throw createError({ statusCode: 404, statusMessage: 'Réalisation introuvable', fatal: true })
 }
 
-const others = computed(() => projects.filter((p) => p.slug !== slug.value).slice(0, 3))
+const projects = useProjects()
+const others = computed(() => projects.value.filter((p) => p.slug !== slug.value).slice(0, 3))
 
 const studyBlocks = computed(() => {
   const s = project.value?.study

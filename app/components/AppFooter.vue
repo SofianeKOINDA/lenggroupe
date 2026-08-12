@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { nav, site } from '~/data/site'
-import { services } from '~/data/services'
 
+const services = useServices()
 const year = new Date().getFullYear()
 </script>
 
@@ -89,7 +89,7 @@ const year = new Date().getFullYear()
 
     <div class="border-t border-ink-900">
       <div
-        class="container-page flex flex-col gap-4 py-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between"
+        class="container-page flex flex-col gap-4 pb-28 pt-6 text-xs text-ink-500 sm:flex-row sm:items-center sm:justify-between lg:pb-6"
       >
         <p>© {{ year }} {{ site.legal }}. Tous droits réservés.</p>
         <nav class="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Liens légaux">

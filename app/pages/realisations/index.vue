@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { categories, projects, references } from '~/data/projects'
+import { references } from '~/data/projects'
 
 useSeoMeta({
   title: 'Nos réalisations',
@@ -7,10 +7,16 @@ useSeoMeta({
     'Villas, immeubles, agences bancaires, aménagements intérieurs et études 3D réalisés par LENG GROUPE au Burkina Faso.'
 })
 
-const active = ref<(typeof categories)[number]>('Tous')
+const projects = useProjects()
+// Les catégories viennent des projets publiés : un filtre vide n'existe jamais.
+const categories = useProjectCategories()
+
+const active = ref('Tous')
 
 const filtered = computed(() =>
-  active.value === 'Tous' ? projects : projects.filter((p) => p.category === active.value)
+  active.value === 'Tous'
+    ? projects.value
+    : projects.value.filter((p) => p.category === active.value)
 )
 </script>
 

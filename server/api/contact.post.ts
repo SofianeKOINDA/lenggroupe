@@ -9,6 +9,8 @@ type Payload = {
   deadline?: string
   message?: string
   company?: string
+  /** Page depuis laquelle le formulaire a été envoyé, pour le suivi. */
+  source?: string
 }
 
 export default defineEventHandler(async (event) => {
@@ -34,20 +36,31 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Adresse email invalide.' })
   }
 
-  // TODO(livraison) : brancher l'envoi réel (SMTP Hostinger, Resend ou webhook WhatsApp).
-  // Tant que ce n'est pas fait, la demande est journalisée côté serveur.
-  console.info('[contact]', {
-    receivedAt: new Date().toISOString(),
-    kind: body.kind ?? 'contact',
-    name,
-    phone,
-    email: body.email ?? null,
-    service: body.service ?? null,
-    budget: body.budget ?? null,
-    location: body.location ?? null,
-    deadline: body.deadline ?? null,
-    message
-  })
+  const kind = body.kind === 'devis' ? 'devis' : 'contact'
+  const ts = now()
+
+  useDb()
+    .prepare(
+      `INSERT INTO leads (kind, name, phone, email, service, budget, location, deadline, message, status, notes, source, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'nouveau', '', ?, ?, ?)`
+    )
+    .run(
+      kind,
+      name,
+      phone,
+      body.email?.trim() || null,
+      body.service?.trim() || null,
+      body.budget?.trim() || null,
+      body.location?.trim() || null,
+      body.deadline?.trim() || null,
+      message,
+      body.source?.trim() || null,
+      ts,
+      ts
+    )
+
+  // Compté comme conversion dans les statistiques du dashboard.
+  recordEvent(kind === 'devis' ? 'devis_envoye' : 'contact_envoye', body.source ?? null, null)
 
   return { ok: true }
 })

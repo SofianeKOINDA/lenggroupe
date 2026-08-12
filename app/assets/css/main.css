@@ -65,6 +65,60 @@
   @apply mx-auto w-full max-w-[1200px] px-5 sm:px-8;
 }
 
+/* ------------------------------------------------------------------ dashboard
+   Habillage de l'espace d'administration (/admin). Ces classes ne servent qu'à
+   lui : elles évitent de répéter vingt utilitaires sur chaque champ de
+   formulaire, et gardent les écrans d'admin cohérents entre eux. */
+
+@layer components {
+  .adm-card {
+    @apply rounded-xl bg-white ring-1 ring-ink-100;
+  }
+
+  .adm-label {
+    @apply mb-2 block text-sm font-semibold text-ink-800;
+  }
+
+  .adm-input {
+    @apply w-full rounded-lg border border-ink-200 bg-white px-3.5 py-2.5 text-sm text-ink-900 outline-none transition placeholder:text-ink-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+  }
+
+  /* Base commune aux boutons : listée en un seul sélecteur car Tailwind v4
+     n'autorise pas `@apply` sur une classe composant définie ici. */
+  .adm-btn,
+  .adm-btn-primary,
+  .adm-btn-ghost,
+  .adm-btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .adm-btn-primary {
+    @apply bg-ink-950 text-white hover:bg-brand-600;
+  }
+
+  .adm-btn-ghost {
+    @apply border border-ink-200 bg-white text-ink-700 hover:border-ink-300 hover:bg-ink-50;
+  }
+
+  .adm-btn-danger {
+    @apply border border-red-200 bg-white text-red-700 hover:bg-red-50;
+  }
+
+  .adm-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset;
+  }
+}
+
+/* Hauteur du hero d'accueil. Le bandeau du bâtiment est en pleine largeur au
+   ratio 2.4:1, donc haut de 100vw/2.4 : le hero doit dépasser cette valeur
+   d'environ 25 % pour dégager la bande de ciel qui porte le mot LENGGROUPE.
+   Écrit ici car Tailwind ne génère pas cette valeur arbitraire (la division
+   dans un calc imbriqué est interprétée comme un modificateur). */
+@utility h-hero {
+  height: min(1360px, max(100svh, 100vw / 1.9));
+  min-height: 600px;
+}
+
 /* État initial des blocs animés (directive v-reveal). GSAP prend le relais
    à l'hydratation ; sans JavaScript, la classe `.js` est absente et rien
    n'est masqué. */

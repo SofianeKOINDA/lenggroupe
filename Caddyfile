@@ -1,0 +1,23 @@
+# Remplacez le domaine si besoin. Caddy demande et renouvelle seul le
+# certificat HTTPS, à condition que les DNS pointent déjà vers ce VPS et que
+# les ports 80 et 443 soient ouverts.
+
+lenggroupe.bf {
+	encode zstd gzip
+
+	header {
+		# Le navigateur refuse le HTTP en clair sur ce domaine pendant un an.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options SAMEORIGIN
+	}
+
+	# Caddy transmet l'IP réelle du visiteur : les statistiques et la limitation
+	# des tentatives de connexion en dépendent.
+	reverse_proxy site:3000
+}
+
+www.lenggroupe.bf {
+	redir https://lenggroupe.bf{uri} permanent
+}

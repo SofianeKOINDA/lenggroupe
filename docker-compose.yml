@@ -1,0 +1,34 @@
+services:
+  site:
+    build: .
+    image: lenggroupe-site
+    restart: unless-stopped
+    # Mots de passe et URL du site : voir .env.example.
+    env_file: .env
+    environment:
+      NUXT_DATA_DIR: /data
+    volumes:
+      # Montage depuis l'hôte : sauvegarder le site, c'est copier ce dossier.
+      - ./data:/data
+    expose:
+      - '3000'
+
+  # Reverse proxy et certificat HTTPS automatique (Let's Encrypt).
+  # Le site n'est jamais exposé en direct : seul Caddy écoute sur 80/443.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - site
+
+volumes:
+  caddy_data:
+  caddy_config:

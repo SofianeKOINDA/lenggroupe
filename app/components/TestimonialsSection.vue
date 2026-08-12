@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { reviews } from '~/data/reviews'
-
 /**
- * La section entière disparaît tant qu'aucun avis réel n'a été saisi dans
- * app/data/reviews.ts. Aucun témoignage fictif n'est généré.
+ * La section entière disparaît tant qu'aucun avis réel n'a été publié depuis le
+ * dashboard. Aucun témoignage fictif n'est généré.
  */
-const hasReviews = computed(() => reviews.length > 0)
+const reviews = useReviews()
+const hasReviews = computed(() => reviews.value.length > 0)
 </script>
 
 <template>

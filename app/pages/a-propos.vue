@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { site, stats } from '~/data/site'
 import { guarantees, process } from '~/data/services'
-import { team } from '~/data/team'
+
+const team = useTeam()
 
 useSeoMeta({
   title: 'À propos',

@@ -1,0 +1,24 @@
+# Tout ce qui n'a rien à faire dans le contexte de build.
+node_modules
+.output
+.nuxt
+.nitro
+.cache
+dist
+
+# Données de production : jamais dans une image.
+data
+sauvegardes
+.env
+.env.*
+!.env.example
+
+.git
+.github
+.claude
+*.log
+.DS_Store
+
+# Fichiers de travail
+design
+Capture*.png

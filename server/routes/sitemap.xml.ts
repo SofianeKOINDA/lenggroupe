@@ -1,5 +1,3 @@
-import { projects } from '../../app/data/projects'
-
 /** Pages statiques, avec leur priorité relative. */
 const staticRoutes: { path: string; priority: number; changefreq: string }[] = [
   { path: '/', priority: 1.0, changefreq: 'weekly' },
@@ -16,9 +14,11 @@ export default defineEventHandler((event) => {
   const base = (useRuntimeConfig().public.siteUrl as string).replace(/\/$/, '')
   const lastmod = new Date().toISOString().slice(0, 10)
 
+  // Seules les réalisations publiées entrent au sitemap : un brouillon ne doit
+  // pas être proposé à l'indexation.
   const urls = [
     ...staticRoutes,
-    ...projects.map((p) => ({
+    ...listProjects(false).map((p) => ({
       path: `/realisations/${p.slug}`,
       priority: 0.8,
       changefreq: 'monthly'

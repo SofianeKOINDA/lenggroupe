@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { site } from '~/data/site'
 import { process } from '~/data/services'
-import { projects } from '~/data/projects'
+
+const projects = useProjects()
 
 const route = useRoute()
 const isQuote = computed(() => route.query.type === 'devis')
@@ -14,7 +15,7 @@ useSeoMeta({
   robots: 'noindex, nofollow'
 })
 
-const suggestions = computed(() => projects.slice(0, 3))
+const suggestions = computed(() => projects.value.slice(0, 3))
 
 // La pastille de validation se dessine à l'arrivée : la page prolonge la
 // séquence de traitement du formulaire au lieu d'apparaître d'un bloc.
