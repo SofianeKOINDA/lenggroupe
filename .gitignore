@@ -18,6 +18,7 @@ logs
 *.log
 
 # Misc
+Capture d’écran*.png
 .DS_Store
 .fleet
 .idea
