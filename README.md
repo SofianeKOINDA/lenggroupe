@@ -58,39 +58,54 @@ Le site a besoin d'un serveur **Node** qui tourne en continu : `npm run generate
 (site statique) est incompatible avec le dashboard et l'enregistrement des
 demandes.
 
-Deux conteneurs : le site, et Caddy qui termine le HTTPS devant lui.
+Le VPS héberge déjà un autre projet (`farmlink`, dans `/opt/farmlink`) dont le
+Caddy détient les ports 80 et 443. Ce site ne les réclame pas : il tourne dans
+un conteneur sans port publié, et le proxy existant l'atteint par un réseau
+Docker partagé. Aucun redémarrage de l'autre site n'est nécessaire.
 
 ### Une seule fois
 
 ```bash
-# 1. Le domaine doit déjà pointer vers l'IP du VPS (enregistrement A),
-#    sinon Caddy ne pourra pas obtenir de certificat.
-sudo ufw allow 80,443/tcp
+# 1. Réseau partagé entre le proxy et les sites qu'il dessert
+docker network create proxy
+docker network connect proxy farmlink_caddy      # à chaud, sans coupure
 
-# 2. Récupérer le projet
-git clone <votre-dépôt> /srv/lenggroupe && cd /srv/lenggroupe
+# 2. Le projet
+git clone <votre-dépôt> /opt/lenggroupe && cd /opt/lenggroupe
+cp .env.example .env && nano .env                # NUXT_ADMIN_PASSWORD au minimum
+mkdir -p data && chown -R 1000:1000 data         # uid du conteneur
 
-# 3. Renseigner les variables (au minimum NUXT_ADMIN_PASSWORD)
-cp .env.example .env && nano .env
-
-# 4. Le dossier de données appartient à l'utilisateur du conteneur (uid 1000)
-mkdir -p data && sudo chown -R 1000:1000 data
-
-# 5. Démarrer
+# 3. Démarrer le site
 docker compose up -d --build
 docker compose logs -f site
+
+# 4. Ajouter le contenu de ./Caddyfile au Caddyfile du proxy, puis
+docker compose -f /opt/farmlink/docker-compose.yml exec caddy \
+  caddy reload --config /etc/caddy/Caddyfile
 ```
 
-Le domaine servi est défini dans le `Caddyfile` — modifiez-le si ce n'est pas
-`lenggroupe.bf`.
+Pour que l'appartenance au réseau `proxy` survive à une recréation du conteneur
+Caddy, ajoutez-la aussi au `docker-compose.yml` de `farmlink` :
+
+```yaml
+services:
+  caddy:
+    networks: [default, proxy]
+
+networks:
+  proxy:
+    external: true
+```
 
 ### Mettre à jour
 
 ```bash
-cd /srv/lenggroupe
+cd /opt/lenggroupe
 git pull
 docker compose up -d --build
 ```
+
+Le proxy n'est pas touché : seul le conteneur du site est reconstruit.
 
 Le dossier `data/` n'est jamais touché par une reconstruction : contenu,
 demandes reçues et photos sont conservés.

@@ -1,7 +1,16 @@
+# Le VPS héberge déjà un reverse proxy (le Caddy du projet farmlink) qui
+# détient les ports 80 et 443. Ce site ne les réclame donc pas : il n'écoute
+# que sur le réseau `proxy`, où le Caddy existant vient le chercher.
+#
+# Mise en place du réseau partagé, une seule fois sur le VPS :
+#   docker network create proxy
+#   docker network connect proxy farmlink_caddy
+
 services:
   site:
     build: .
     image: lenggroupe-site
+    container_name: lenggroupe_site
     restart: unless-stopped
     # Mots de passe et URL du site : voir .env.example.
     env_file: .env
@@ -10,25 +19,13 @@ services:
     volumes:
       # Montage depuis l'hôte : sauvegarder le site, c'est copier ce dossier.
       - ./data:/data
+    networks:
+      - proxy
+    # Aucun port publié : le site n'est joignable que par le reverse proxy,
+    # jamais directement depuis Internet.
     expose:
       - '3000'
 
-  # Reverse proxy et certificat HTTPS automatique (Let's Encrypt).
-  # Le site n'est jamais exposé en direct : seul Caddy écoute sur 80/443.
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    ports:
-      - '80:80'
-      - '443:443'
-      - '443:443/udp'
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - site
-
-volumes:
-  caddy_data:
-  caddy_config:
+networks:
+  proxy:
+    external: true

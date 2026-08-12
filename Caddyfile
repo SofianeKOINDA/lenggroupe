@@ -1,6 +1,14 @@
-# Remplacez le domaine si besoin. Caddy demande et renouvelle seul le
-# certificat HTTPS, à condition que les DNS pointent déjà vers ce VPS et que
-# les ports 80 et 443 soient ouverts.
+# Bloc à ajouter au Caddyfile du reverse proxy déjà en place sur le VPS
+# (celui du projet farmlink, /opt/farmlink), puis :
+#
+#   docker compose -f /opt/farmlink/docker-compose.yml exec caddy \
+#     caddy reload --config /etc/caddy/Caddyfile
+#
+# `caddy reload` recharge la configuration sans couper une seule connexion :
+# les sites déjà servis par ce proxy ne sont pas interrompus.
+#
+# Caddy demande et renouvelle seul le certificat, à condition que les DNS
+# pointent vers ce VPS — c'est le cas : lenggroupe.bf → 76.13.44.239.
 
 lenggroupe.bf {
 	encode zstd gzip
@@ -13,9 +21,9 @@ lenggroupe.bf {
 		X-Frame-Options SAMEORIGIN
 	}
 
-	# Caddy transmet l'IP réelle du visiteur : les statistiques et la limitation
-	# des tentatives de connexion en dépendent.
-	reverse_proxy site:3000
+	# Nom du conteneur sur le réseau `proxy`. Caddy transmet l'IP réelle du
+	# visiteur : les statistiques et la limitation des tentatives en dépendent.
+	reverse_proxy lenggroupe_site:3000
 }
 
 www.lenggroupe.bf {
